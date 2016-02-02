@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width')
+    title= title
+    block css
+      link(rel='stylesheet', href='/css/styles.min.css')
+    block js
+      script(src='/vendor/es6-shim/es6-shim.min.js')
+      script(src='/vendor/es6-shim/es6-sham.min.js')  
+      script(src='/vendor/webcomponentsjs/webcomponents.js')
+    link(rel='import',href='/vendor/polymer/polymer.html')
+    link(rel="import",href='/components/examplePolymer.html')
+  body
+    block content
+yle
