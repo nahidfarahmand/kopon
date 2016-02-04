@@ -27,7 +27,7 @@ var indexRouter = express.Router();
 indexRouter.route('/')
   .all(controllers.index);
 
-indexRouter.route('/owner/index').get(isLoggedIn, function(req, res){
+indexRouter.route('/owner').get(isLoggedIn, function(req, res){
   res.render('owner/index', {
     user : req.user
   });

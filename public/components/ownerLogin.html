@@ -1,7 +1,7 @@
 <!-- Imports polymer -->
-<link rel="import" href="../vendor/paper-card/paper-card.html">
-<link rel="import" href="../vendor/paper-input/paper-input.html">
-<link rel="import" href="../vendor/paper-button/paper-button.html">
+<link rel="import" href="/vendor/paper-material/paper-material.html">
+<link rel="import" href="/vendor/paper-input/paper-input.html">
+<link rel="import" href="/vendor/paper-button/paper-button.html">
 <!-- Defines element markup -->
 <dom-module id="owner-login">
   <template>
@@ -9,27 +9,46 @@
       :host {
         @apply(--layout-vertical);
         @apply(--layout-center);
-        padding:16px;
+        
       }
-      paper-card {
+      paper-material {
         width:350px;                
         --paper-card-header-color: var(--paper-pink-500);
+        padding:16px;
+        margin: 50px auto;
       }
 
-      paper-button {
-        float: right;
-        color: var(--paper-pink-500);
+      paper-button {                        
+        margin: 0;
       }      
+
+      #login {
+        width: 100%;
+        color: #fff;        
+        background: var(--paper-pink-500);
+      }
+
+      #forgotpassword {  
+        width: 100%;      
+        color: var(--paper-pink-500);
+      }
+
+      #signup {
+        color: var(--paper-pink-500);
+      }
     </style>    
-    <paper-card heading="Owner Login">
-      <div class="card-content">
+      <paper-material elevation="2" id="form">              
         <paper-input value="{{username}}" label="Username" type="text" auto-validate required></paper-input>
         <paper-input value="{{password}}" label="Password" type="password" auto-validate required></paper-input>        
-      </div>
-      <div class="card-actions">
-        <paper-button on-click="login">Login</paper-button>      
-      </div>
-    </paper-card>
+        <br>        
+        <paper-button on-click="login" id="forgotpassword">Forgot password?</paper-button>
+        <br>
+        <br>
+        <paper-button raised on-click="login" id="login">Login</paper-button>
+        <br>
+        <br>
+        Don't have an account? <paper-button on-click="signup" id="signup">Sign Up</paper-button>
+      </paper-material>    
   </template>
 </dom-module>
 
@@ -40,8 +59,12 @@
     properties: {
       username: {type:String},
       password: {type:String}  
-    },    
+    },
+    signup:function() {
+      window.location.href = "/signup";
+    },
     login:function(){
+      var that = this;
       var data = {};      
       data.username = this.username;
       data.password = this.password;      
@@ -53,7 +76,9 @@
         method: "POST"
       }).done(function(msg){
         if(msg.success == 1) {
-          window.location.href = "/owner/index"          
+          window.location.href = "/owner"          
+        } else {
+          //error
         }
       }).fail(function(err){
         console.log(err);

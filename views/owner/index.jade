@@ -19,7 +19,7 @@ html(lang='en')
     meta(name='msapplication-TileImage', content='/img/touch/ms-touch-icon-144x144-precomposed.png')
     link(rel='stylesheet', href='/css/styles.css')
     script(src='/vendor/webcomponentsjs/webcomponents.js')
-    link(rel='import', href='/components/elements.html')
+    link(rel='import', href='/components/elements.html')    
     style(is='custom-style', include='shared-styles')
   body(unresolved='')
     span#browser-sync-binding
@@ -29,13 +29,13 @@ html(lang='en')
           paper-toolbar#drawerToolbar
             span.menu-name Menu
           paper-menu(attr-for-selected='data-route', selected='[[route]]')
-            a(data-route='home', href='{{baseUrl}}')
+            a(data-route='home', href='/owner')
               iron-icon(icon='home')
               span Home
-            a(data-route='users', href='{{baseUrl}}users')
+            a(data-route='users', href='/owner/users')
               iron-icon(icon='info')
               span Users
-            a(data-route='contact', href='{{baseUrl}}contact')
+            a(data-route='contact', href='/owner/contact')
               iron-icon(icon='mail')
               span Contact
         paper-scroll-header-panel#headerPanelMain(main='', condenses='', keep-condensed-header='')
@@ -90,13 +90,13 @@ html(lang='en')
                 paper-material(elevation='1')
                   h2.page-title Users
                   p This is the users section
-                  a(href$='{{baseUrl}}users/Addy') Addy
+                  a(href='/owner/users/Addy') Addy
                   br
-                  a(href$='{{baseUrl}}users/Rob') Rob
+                  a(href='/owner/users/Rob') Rob
                   br
-                  a(href$='{{baseUrl}}users/Chuck') Chuck
+                  a(href='/owner/users/Chuck') Chuck
                   br
-                  a(href$='{{baseUrl}}users/Sam') Sam
+                  a(href='/owner/users/Sam') Sam
               section(data-route='user-info')
                 paper-material(elevation='1')
                   h2.page-title User: {{params.name}}
