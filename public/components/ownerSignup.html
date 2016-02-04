@@ -1,0 +1,91 @@
+<!-- Imports polymer -->
+<link rel="import" href="../vendor/paper-card/paper-card.html">
+<link rel="import" href="../vendor/paper-input/paper-input.html">
+<link rel="import" href="../vendor/paper-button/paper-button.html">
+<link rel="import" href="../vendor/paper-toast/paper-toast.html">
+<link rel="import" href="../vendor/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../vendor/gold-phone-input/gold-phone-input.html">
+<!-- Defines element markup -->
+<dom-module id="owner-signup">
+  <template>
+    <style>    
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding:16px;
+      }
+      paper-card {
+        width:350px;                
+        --paper-card-header-color: var(--paper-pink-500);
+      }
+
+      paper-button {
+        float: right;
+        color: var(--paper-pink-500);
+      }
+
+      #stoast {        
+        --paper-toast-background-color: var(--paper-green-500);
+      }
+
+      #etoast {
+        --paper-toast-background-color: var(--paper-red-500);
+      }
+    </style>
+    <paper-toast text="Ownser was registered successfully!" id="stoast"></paper-toast>
+    <paper-toast text="Ownser registration failed!" id="etoast"></paper-toast>
+    <paper-card heading="Owner Registration">
+      <div class="card-content">
+        <paper-input value="{{firstname}}" label="First Name" type="text" auto-validate required></paper-input>
+        <paper-input value="{{lastname}}" label="Last Name" type="text" auto-validate required></paper-input>
+        <paper-input value="{{username}}" label="Username" type="text" auto-validate required char-counter minlength="6" ></paper-input>
+        <paper-input value="{{email}}" label="Email" type="email" auto-validate required ></paper-input>
+        <paper-input value="{{password}}" label="Password" type="password" char-counter minlength="8" auto-validate></paper-input>
+        <gold-phone-input auto-validate required label="Phone Number" value="{{phonenumber}}"></gold-phone-input>
+      </div>
+      <div class="card-actions">
+        <paper-button on-click="signup">Register</paper-button>      
+      </div>
+    </paper-card>
+  </template>
+</dom-module>
+
+<!-- Registers custom element -->
+<script>
+  Polymer({
+    is: 'owner-signup',
+    properties: {
+      username: {type:String},
+      password: {type:String},
+      email: {type:String}
+      
+    },    
+    signup:function(){
+      var data = {};      
+      data.username = this.username;
+      data.password = this.password;
+      data.email = this.email;
+      data.firstname = this.firstname;
+      data.lastname = this.lastname;
+      data.phonenumber = this.phonenumber;
+      var that = this;
+
+      $.ajax({
+        url:"/signup",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        method: "POST"
+      }).done(function(msg){
+        if(msg.success == 1) {
+          that.$.stoast.open();
+          window.location.href = "/owner/index";
+        } else {
+          that.$.etoast.open();
+        }
+      }).fail(function(err){
+        //error
+      });
+    }
+  });
+
+</script>
