@@ -45,3 +45,21 @@ exports.signup = function(req, res) {
     	}
     });
 };
+
+
+exports.getBusiness = function(req, res) {  
+    var _user = req.query.username;  
+    OwnerSchema.find({username:_user}).select('businessCollection').sort({
+        createdAt: 1
+    }).exec(function(err,list){
+        if(err){
+            res.send('error');
+        }
+        else {
+            res.set('Content-Type', 'application/json');
+            res.send(list);
+            
+        }
+    });
+    
+};

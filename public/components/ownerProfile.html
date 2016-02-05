@@ -1,0 +1,85 @@
+<!-- Imports polymer -->
+<link rel="import" href="/vendor/paper-material/paper-material.html">
+<link rel="import" href="/vendor/paper-input/paper-input.html">
+<link rel="import" href="/vendor/paper-button/paper-button.html">
+<link rel="import" href="/vendor/paper-toast/paper-toast.html">
+<link rel="import" href="/vendor/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/vendor/gold-phone-input/gold-phone-input.html">
+<!-- Defines element markup -->
+<dom-module id="owner-signup">
+  <template>
+    <style>    
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center);        
+      }      
+
+      paper-material {
+        padding: 16px;
+        max-width: 280px;
+        width: 280px;
+        margin: 50px;
+      }
+
+      paper-button {
+        float: right;
+        color: var(--paper-pink-500);
+      }
+
+      #stoast {        
+        --paper-toast-background-color: var(--paper-green-500);
+      }
+
+      #etoast {
+        --paper-toast-background-color: var(--paper-red-500);
+      }
+    </style>
+    <paper-toast text="profile edited successfully!" id="stoast"></paper-toast>
+    <paper-toast text="update failed!" id="etoast"></paper-toast>
+    <paper-material elevation="2">      
+      <paper-input value="{{firstname}}" label="First Name" type="text" auto-validate required ></paper-input>
+      <paper-input value="{{lastname}}" label="Last Name" type="text" auto-validate required ></paper-input>
+      <paper-input value="{{email}}" label="Email" type="email" auto-validate required ></paper-input>
+      <gold-phone-input auto-validate required label="Phone Number" value="{{phonenumber}}"></gold-phone-input>
+      <br>      
+      <paper-button on-click="save">Save</paper-button>
+    </paper-material>
+  </template>
+</dom-module>
+
+<!-- Registers custom element -->
+<script>
+  Polymer({
+    is: 'owner-profile',
+    properties: {
+      username: {type:String},
+      password: {type:String},
+      email: {type:String}
+      
+    },    
+    save:function(){
+      var data = {};      
+      data.email = this.email;
+      data.phonenumber = this.phonenumber;
+      var that = this;
+
+      $.ajax({
+        url:"/editProfile",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        method: "POST"
+      }).done(function(msg){
+        if(msg.success == 1) {
+          that.$.stoast.open();
+          window.location.href = "/owner";
+        } else {
+          that.$.etoast.open();
+        }
+      }).fail(function(err){
+        //error
+      });
+    }
+    
+  });
+
+</script>

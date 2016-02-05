@@ -1,11 +1,11 @@
 exports.index = function(req, res) {
-    res.render('index',{title :'Polymer App'});
+    res.render('index',{title :'Kopon'});
 };
 
 exports.signup = function(req, res) {
-    res.render('signup',{title :'Polymer App'});
+    res.render('signup',{title :'Kopon'});
 };
 
 exports.login = function(req, res) {
-    res.render('login',{title :'Polymer App'});
+    res.render('login',{title :'Kopon'});
 };

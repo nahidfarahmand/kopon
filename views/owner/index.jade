@@ -32,12 +32,15 @@ html(lang='en')
             a(data-route='home', href='/owner')
               iron-icon(icon='home')
               span Home
-            a(data-route='users', href='/owner/users')
+            a(data-route='business', href='/owner/business')
               iron-icon(icon='info')
-              span Users
-            a(data-route='contact', href='/owner/contact')
-              iron-icon(icon='mail')
-              span Contact
+              span Business
+            a(data-route='coupons', href='/owner/coupons')
+              iron-icon(icon='info')
+              span Coupons
+            a(data-route='profile', href='/owner/profile')
+              iron-icon(icon='info')
+              span Profile
         paper-scroll-header-panel#headerPanelMain(main='', condenses='', keep-condensed-header='')
           paper-toolbar#mainToolbar.tall
             paper-icon-button#paperToggle(icon='menu', paper-drawer-toggle='')
@@ -53,58 +56,14 @@ html(lang='en')
           .content
             iron-pages(attr-for-selected='data-route', selected='{{route}}')
               section(data-route='home')
-                paper-material(elevation='1')
-                  my-greeting
-                  p.subhead You now have:
-                  my-list
-                  p
-                    | Looking for more Web App layouts? Check out our 
-                    a(href='https://github.com/PolymerElements/app-layout-templates') layouts
-                    |  collection. You can also 
-                    a(href='http://polymerelements.github.io/app-layout-templates/') preview
-                    |  them live.
-                paper-material(elevation='1')
-                  p This is another card.
-                paper-material(elevation='1')
-                  h1#license License
-                  p Everything in this repo is BSD style license unless otherwise specified.
-                  p Copyright (c) 2015 The Polymer Authors. All rights reserved.
-                  p
-                    | Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-                  ul
-                    li
-                      | Redistributions of source code must retain the above copyright
-                      | notice, this list of conditions and the following disclaimer.
-                    li
-                      | Redistributions in binary form must reproduce the above
-                      | copyright notice, this list of conditions and the following disclaimer
-                      | in the documentation and/or other materials provided with the
-                      | distribution.
-                    li
-                      | Neither the name of Google Inc. nor the names of its
-                      | contributors may be used to endorse or promote products derived from
-                      | this software without specific prior written permission.
-                  p
-                    | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-              section(data-route='users')
-                paper-material(elevation='1')
-                  h2.page-title Users
-                  p This is the users section
-                  a(href='/owner/users/Addy') Addy
-                  br
-                  a(href='/owner/users/Rob') Rob
-                  br
-                  a(href='/owner/users/Chuck') Chuck
-                  br
-                  a(href='/owner/users/Sam') Sam
-              section(data-route='user-info')
-                paper-material(elevation='1')
-                  h2.page-title User: {{params.name}}
-                  div This is {{params.name}}'s section
-              section(data-route='contact')
-                paper-material(elevation='1')
-                  h2.page-title Contact
-                  p This is the contact section
+                span this is home section
+              section(data-route='profile')
+                span This is profile section
+                //owner-profile???
+              section(data-route='coupons')
+                span this is coupon section
+              section(data-route='business')
+                span This is business section
       paper-toast#toast
         span.toast-hide-button(role='button', tabindex='0', onclick='app.$.toast.hide()') Ok
     script(src='/js/app.js')
