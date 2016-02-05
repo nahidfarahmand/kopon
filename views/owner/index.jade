@@ -19,7 +19,7 @@ html(lang='en')
     meta(name='msapplication-TileImage', content='/img/touch/ms-touch-icon-144x144-precomposed.png')
     link(rel='stylesheet', href='/css/styles.css')
     script(src='/vendor/webcomponentsjs/webcomponents.js')
-    link(rel='import', href='/components/elements.html')
+    link(rel='import', href='/components/owner/elements.html')
     style(is='custom-style', include='shared-styles')
   body(unresolved='')
     span#browser-sync-binding
@@ -66,5 +66,5 @@ html(lang='en')
                 span This is business section
       paper-toast#toast
         span.toast-hide-button(role='button', tabindex='0', onclick='app.$.toast.hide()') Ok
-    script(src='/js/app.js')
+    script(src='/js/owner/app.js')
     

@@ -41,13 +41,13 @@
         <paper-input value="{{username}}" label="Username" type="text" auto-validate required></paper-input>
         <paper-input value="{{password}}" label="Password" type="password" auto-validate required></paper-input>        
         <br>        
-        <paper-button on-click="login" id="forgotpassword">Forgot password?</paper-button>
+        <a href="/home/forgotpassword"><paper-button id="forgotpassword">Forgot password?</paper-button></a>
         <br>
         <br>
         <paper-button raised on-click="login" id="login">Login</paper-button>
         <br>
         <br>
-        Don't have an account? <paper-button on-click="signup" id="signup">Sign Up</paper-button>
+        Don't have an account? <a data-route="signup" href="/home/signup"><paper-button id="signup">Sign Up</paper-button></a>
       </paper-material>    
   </template>
 </dom-module>
@@ -59,9 +59,6 @@
     properties: {
       username: {type:String},
       password: {type:String}  
-    },
-    signup:function() {
-      window.location.href = "/signup";
     },
     login:function(){
       var that = this;

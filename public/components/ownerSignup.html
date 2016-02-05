@@ -24,6 +24,7 @@
       paper-button {
         float: right;
         color: var(--paper-pink-500);
+        margin: 0;
       }
 
       #stoast {        
@@ -45,6 +46,9 @@
       <gold-phone-input auto-validate required label="Phone Number" value="{{phonenumber}}"></gold-phone-input>
       <br>      
       <paper-button on-click="signup">Register</paper-button>
+      <a style="float:left;" href="/home">
+        <paper-button>Back</paper-button>
+      </a>
     </paper-material>
   </template>
 </dom-module>

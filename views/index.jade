@@ -1,4 +1,51 @@
-extends layout
-
-block content	
-	a(href="/login") Login
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width')
+    title Kopon
+    meta(charset='utf-8')
+    meta(name='description', content='')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='generator', content='Kopon')
+    meta(name='theme-color', content='#2E3AA1')
+    link(rel='manifest', href='manifest.json')
+    meta(name='msapplication-TileColor', content='#3372DF')
+    meta(name='mobile-web-app-capable', content='yes')
+    meta(name='application-name', content='PSK')
+    link(rel='icon', sizes='192x192', href='/img/touch/chrome-touch-icon-192x192.png')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-status-bar-style', content='black')
+    meta(name='apple-mobile-web-app-title', content='Kopon')
+    link(rel='apple-touch-icon', href='/img/touch/apple-touch-icon.png')
+    meta(name='msapplication-TileImage', content='/img/touch/ms-touch-icon-144x144-precomposed.png')
+    block css
+      link(rel='stylesheet', href='/css/styles.min.css')
+    block js
+      script(src='/vendor/jquery/dist/jquery.js')
+      script(src='/vendor/es6-shim/es6-shim.min.js')
+      script(src='/vendor/es6-shim/es6-sham.min.js')  
+      script(src='/vendor/webcomponentsjs/webcomponents.js')
+    link(rel='import', href='/vendor/polymer/polymer.html')
+    link(rel='import', href='/vendor/iron-icons/iron-icons.html')
+    link(rel='import', href='/vendor/paper-toolbar/paper-toolbar.html')
+    link(rel='import', href='/vendor/paper-icon-button/paper-icon-button.html')
+    link(rel='import', href='/vendor/iron-pages/iron-pages.html')
+    link(rel="import", href="/vendor/iron-flex-layout/classes/iron-flex-layout.html")
+    link(rel='import', href='/components/ownerLogin.html')
+    link(rel='import', href='/components/ownerSignup.html')
+    link(rel='import', href='/components/routing.html')
+    link(rel='import', href='/components/styles.html')
+    style(is='custom-style', include='styles')
+  body(unresolved='')
+    span#browser-sync-binding
+    template#app(is='dom-bind')
+      .container
+        iron-pages(attr-for-selected='data-route', selected='{{route}}')
+          section(data-route='login')
+            owner-login#content
+          section(data-route='signup')
+            owner-signup#content
+        paper-toast#toast
+          span.toast-hide-button(role='button', tabindex='0', onclick='app.$.toast.hide()') Ok
+  script(src='/js/app.js')
