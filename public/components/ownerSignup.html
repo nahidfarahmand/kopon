@@ -79,7 +79,7 @@
         contentType: "application/json",
         method: "POST"
       }).done(function(msg){
-        if(msg.success == 1) {
+        if(msg.success) {
           that.$.stoast.open();
           window.location.href = "/owner";
         } else {

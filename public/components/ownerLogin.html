@@ -72,7 +72,7 @@
         contentType: "application/json",
         method: "POST"
       }).done(function(msg){
-        if(msg.success == 1) {
+        if(msg.success) {
           window.location.href = "/owner"          
         } else {
           //error

@@ -1,10 +1,23 @@
 var express = require('express'),
     passport = require('passport'),
+    fs = require('fs'),
     couponController = require('../controllers/coupon'),
     ownerController = require('../controllers/owner'),
     businessController = require('../controllers/business');
 
 var indexRouter = express.Router();
+
+var appHelpers = {};
+appHelpers.sendFile = function(pathname, res) {    
+    var file = fs.createReadStream(pathname);
+    file.on('data', res.write.bind(res));
+    file.on('close', function () {
+        res.end();
+    });
+    file.on('error', function (error) {
+        console.log(error);
+    })
+};
 
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()){
@@ -29,19 +42,24 @@ indexRouter.route('/owner').get(isLoggedIn, function(req, res){
   });
 });
 
+indexRouter.route('/verification_documents/*').get(function(req, res){    
+  console.log(req.url);
+  appHelpers.sendFile('.' + req.url, res);
+});
+
 indexRouter.route('/login').post(passport.authenticate('local-login', {failureRedirect: '/login'}), function(req, res){
   if(req.user) {
-    res.status(200).send({'success':1, 'user': req.user});
+    res.status(200).send({'success':true, 'user': req.user});
   } else {
-    res.status(401).send({'success': 0});
+    res.status(401).send({'success': false});
   }
 });
 
 indexRouter.route('/signup').post(passport.authenticate('local-signup', {failureRedirect: '/signup'}), function(req, res){
   if(req.user) {    
-    res.status(200).send({'success':1, 'user': req.user});
+    res.status(200).send({'success':true, 'user': req.user});
   } else {
-    res.status(401).send({'success': 0});
+    res.status(401).send({'success': false});
   }
 });
 
@@ -59,5 +77,6 @@ indexRouter.route('/owner/api/business').post(businessController.add);
 indexRouter.route('/owner/api/business/:id').delete(businessController.deleteBusiness);
 indexRouter.route('/owner/api/business/:id').get(ownerController.getBusiness);
 indexRouter.route('/owner/api/businesses').get(ownerController.getAllBusiness);
+indexRouter.route('/owner/upload/document').post(upload.single('document'), ownerController.uploadDocument);
 
 exports.indexRouter = indexRouter;

@@ -16,14 +16,14 @@
         right: 24px;
         bottom: 0;
         margin-bottom: 24px;        
-      }
-
-      paper-dialog-scrollable {
-        padding: 16px;        
-      }
+      }      
 
       address-autocomplete {
-        width: 320px;
+        width: 280px;
+      }
+
+      paper-dialog {
+        margin: 16px;
       }
 
       #stoast {        
@@ -42,7 +42,7 @@
     </iron-ajax>
     <paper-fab icon="add" on-click="showDialog" data-dialog="add"></paper-fab>
     <div class="horizontal-section-container">
-      <template is="dom-repeat" items="[[data.businesses]]" as="item">
+      <template id="repeater" is="dom-repeat" items="[[data.businesses]]" as="item" observe="verificationDocumentUrl item.verificationDocumentUrl">
         <style is="custom-style">
           paper-card {
             width: 320px;
@@ -73,8 +73,14 @@
           }
 
           .not-verified {
-            color: var(--paper-red-500);            
+            color: var(--paper-red-500);
+          }          
+
+          a, a:visited {
+            text-decoration: none;
+            color: var(--paper-deep-orange-500);
           }
+
           iron-icon.star:last-of-type { color: var(--paper-grey-500); }
         </style>
         <paper-card>
@@ -82,6 +88,14 @@
             <div class="business-header" id="item-[[item._id]]">
               [[item.name]]
               <paper-tooltip position="top">[[item.name]]</paper-tooltip>
+              <span>
+                <template is="dom-if" if="{{item.verifiedAt}}">
+                  <iron-icon icon="icons:grade" class="verified"></iron-icon>
+                </template>
+                <template is="dom-if" if="{{!item.verifiedAt}}">
+                  <iron-icon icon="icons:grade" class="not-verified"></iron-icon>
+                </template>
+              </span>
             </div>                        
             <p class="business-light">
               [[item.address]]
@@ -96,13 +110,20 @@
                 <span>[[item.coupons.length]]</span>                
               </span>            
             </p>
+            <template is="dom-if" if="{{item.verificationDocumentUrl}}">
+              <p>
+                <a href="[[item.verificationDocumentUrl]]" target="_blank">
+                  <iron-icon icon="icons:description"></iron-icon> Verification Document                
+                </a>              
+              </p>
+            </template>
           </div>
-          <div class="card-actions">
-            <template is="dom-if" if="[[!item.verifiedAt]]">
+          <div class="card-actions">            
+            <template is="dom-if" if="{{!item.verificationDocumentUrl}}">
               <paper-button on-click="showDialog" data-dialog="verify" class="action-verify">Verify</paper-button>
-            </template>            
+            </template>
             <paper-button on-click="showDialog" data-dialog="update" class="action-edit">Update</paper-button>
-            <paper-button on-click="showDialog" data-business-name="{{item.name}}" data-business-id="{{item.id}}" data-dialog="remove" class="action-remove">Remove</paper-button>
+            <paper-button on-click="showDialog" data-dialog="remove" class="action-remove">Remove</paper-button>
           </div>
         </paper-card>        
       </template>
@@ -122,7 +143,7 @@
     </paper-dialog>
 
     <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="remove" modal>
-      <!-- <h2>{{removingBusiness.name}}</h2> -->
+      <!-- <h2>{{currentItem.name}}</h2> -->
       <p>Are you sure you want to remove this business?</p>      
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
@@ -130,14 +151,14 @@
       </div>
     </paper-dialog>
 
-    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="verify">
-      <h2>New Business</h2>
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="verify" modal>
+      <h2>Upload verification document</h2>
       <paper-dialog-scrollable>
-        <!-- business form goes here -->
+        <paper-input id="documentFile" label="Document" type="file" auto-validate required accept="application/pdf"></paper-input>
       </paper-dialog-scrollable>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-click="showAddBusinessDialog">Create</paper-button>
+        <paper-button on-click="verifyBusiness">Verify</paper-button>
       </div>
     </paper-dialog>
 
@@ -170,7 +191,7 @@
           phoneNumber: ""
         }
       },
-      removingBusiness: {
+      currentItem: {
         type: Object,
         value: {
           name: "",
@@ -200,6 +221,7 @@
           dialog.close();
           that.smsg = "Business was created successfully!";
           that.$.stoast.open();                    
+          that._addBusinessDom(msg.business);
         } else {
           that.emsg = "Business creation failed!";
           that.$.etoast.open();
@@ -208,11 +230,11 @@
         console.log(err);
       });
     },
-    updateBusiness: function() {
-
+    _addBusinessDom: function(business) {
+      this.push('data.businesses', business);
     },
     removeBusiness: function(e) {
-      var id = this.removingBusiness.id;
+      var id = this.currentItem.id;
       var dialog = document.getElementById("remove");
       var that = this;
       $.ajax({
@@ -221,7 +243,8 @@
       }).done(function(msg){
         if(msg.success) { 
           that.smsg = "Business was removed successfully!";
-          that.$.stoast.open();                    
+          that.$.stoast.open();
+          that._removeBusinessDom(id);
         } else {
           that.emsg = "Business removal failed!";
           that.$.etoast.open();
@@ -232,8 +255,49 @@
       });
 
     },
+    _removeBusinessDom: function(id) {
+      for(var i = 0; i < this.data.businesses.length; i++) {
+        if(this.data.businesses[i]._id == id) {
+          this.splice("data.businesses", i, 1);
+          break;
+        }
+      }
+    },
     verifyBusiness: function() {
+      var that = this;
+      var dialog = document.getElementById("verify");
+      var formData = new FormData();
+      formData.append("id", that.currentItem.id);
+      formData.append("document", that.$.documentFile.$.input.files[0]);      
 
+      $.ajax({
+        url:"/owner/upload/document",
+        method: "POST",
+        processData: false,
+        contentType: false,
+        dataType : 'json',
+        data: formData
+      }).done(function(msg){
+        if(msg.success) { 
+          that.smsg = "We received your document, thanks!";
+          that.$.stoast.open();
+          that._updateBusinessDom(msg.business);
+        } else {
+          that.emsg = "Document upload failed!";
+          that.$.etoast.open();
+        }
+        dialog.close();
+      }).fail(function(err){
+        console.log(err);
+      });
+    },
+    _updateBusinessDom: function(business) {
+      for(var i = 0; i < this.data.businesses.length; i++) {
+        if(this.data.businesses[i]._id == business._id) {
+          this.set("data.businesses."+ i +".verificationDocumentUrl", business.verificationDocumentUrl);
+          break;
+        }
+      }
     },
     showDialog:function(e) {
       var button = e.target;
@@ -249,10 +313,18 @@
       var dialog = document.getElementById(id);
       if (dialog) {
         dialog.open();
+        if(id == 'add') return;
       }
 
-      this.removingBusiness.name = e.model.item.name;
-      this.removingBusiness.id = e.model.item._id;      
+      var model;
+      if(id == 'verify'){
+        model = this.$.repeater.modelForElement(button);
+      } else {
+        model = e.model;        
+      }
+
+      this.currentItem.name = model.item.name;
+      this.currentItem.id = model.item._id;
     }
   });
 </script>
