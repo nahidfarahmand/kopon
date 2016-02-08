@@ -33,6 +33,11 @@
       #etoast {
         --paper-toast-background-color: var(--paper-red-500);
       }
+
+      .no-business {
+        font-size: 24px;      
+        color: #bbb;        
+      }
     </style>    
     <iron-ajax
       auto
@@ -41,7 +46,10 @@
       last-response="{{data}}">
     </iron-ajax>
     <paper-fab icon="add" on-click="showDialog" data-dialog="add"></paper-fab>
-    <div class="horizontal-section-container">
+    <div class="horizontal-section-container">      
+      <!-- <template is="dom-if" if="{{data.businesses.length == 0}}">
+        <span class="no-business">You have no business, click + to add one!</span>
+      </template> -->
       <template id="repeater" is="dom-repeat" items="[[data.businesses]]" as="item" observe="verificationDocumentUrl item.verificationDocumentUrl">
         <style is="custom-style">
           paper-card {
@@ -325,6 +333,17 @@
 
       this.currentItem.name = model.item.name;
       this.currentItem.id = model.item._id;
+    },
+    _renderRepeat: function () {
+      this.paperCard = Polymer.dom(this.root).querySelectorAll('task-element');
+      this.animationConfig['entry'].push({
+          name: 'cascaded-animation',
+          animation: 'transform-animation',
+          transformFrom: 'translateY(100vh)',
+          nodes: this.paperCard
+      });
+
+      this.playAnimation('entry');
     }
   });
 </script>
