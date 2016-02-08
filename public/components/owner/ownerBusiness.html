@@ -1,0 +1,258 @@
+<dom-module id="owner-business">
+  <template>
+    <style>    
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center);        
+      }         
+
+      .horizontal-section-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+      }         
+      paper-fab {
+        position: fixed;
+        right: 24px;
+        bottom: 0;
+        margin-bottom: 24px;        
+      }
+
+      paper-dialog-scrollable {
+        padding: 16px;        
+      }
+
+      address-autocomplete {
+        width: 320px;
+      }
+
+      #stoast {        
+        --paper-toast-background-color: var(--paper-green-500);
+      }
+
+      #etoast {
+        --paper-toast-background-color: var(--paper-red-500);
+      }
+    </style>    
+    <iron-ajax
+      auto
+      url="/owner/api/businesses"      
+      handle-as="json"
+      last-response="{{data}}">
+    </iron-ajax>
+    <paper-fab icon="add" on-click="showDialog" data-dialog="add"></paper-fab>
+    <div class="horizontal-section-container">
+      <template is="dom-repeat" items="[[data.businesses]]" as="item">
+        <style is="custom-style">
+          paper-card {
+            width: 320px;
+            margin: 16px;
+          }
+          .business-header { 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            @apply(--paper-font-headline);            
+          }
+          .business-light { color: var(--paper-grey-600); }
+          .business-verified {
+            display: inline;            
+            font-size: 15px;
+            vertical-align: middle;
+          }
+          .action-verify, .action-edit { color: var(--paper-blue-500); }
+          .action-remove { color: var(--paper-red-500); }
+          iron-icon.star {
+            --iron-icon-width: 16px;
+            --iron-icon-height: 16px;
+            color: var(--paper-amber-500);
+          }
+
+          .verified {
+            color: var(--paper-green-500);
+          }
+
+          .not-verified {
+            color: var(--paper-red-500);            
+          }
+          iron-icon.star:last-of-type { color: var(--paper-grey-500); }
+        </style>
+        <paper-card>
+          <div class="card-content" class="horizontal-section">            
+            <div class="business-header" id="item-[[item._id]]">
+              [[item.name]]
+              <paper-tooltip position="top">[[item.name]]</paper-tooltip>
+            </div>                        
+            <p class="business-light">
+              [[item.address]]
+            </p>
+            <p>
+              <span>            
+                <iron-icon icon="communication:contact-phone"></iron-icon>
+                <span>[[item.phoneNumber]]</span>                
+              </span>
+              <span style="float:right">
+                <iron-icon icon="icons:card-giftcard"></iron-icon>
+                <span>[[item.coupons.length]]</span>                
+              </span>            
+            </p>
+          </div>
+          <div class="card-actions">
+            <template is="dom-if" if="[[!item.verifiedAt]]">
+              <paper-button on-click="showDialog" data-dialog="verify" class="action-verify">Verify</paper-button>
+            </template>            
+            <paper-button on-click="showDialog" data-dialog="update" class="action-edit">Update</paper-button>
+            <paper-button on-click="showDialog" data-business-name="{{item.name}}" data-business-id="{{item.id}}" data-dialog="remove" class="action-remove">Remove</paper-button>
+          </div>
+        </paper-card>        
+      </template>
+    </div>
+
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="add" modal>
+      <h2>New Business</h2>
+      <paper-dialog-scrollable>
+        <paper-input value="{{business.name}}" label="Name" type="text" auto-validate required char-counter minlength="6" maxlength="20"></paper-input>
+        <gold-phone-input auto-validate required label="Phone Number" value="{{business.phoneNumber}}"></gold-phone-input>
+        <address-autocomplete value="{{business.address}}"></address-autocomplete>        
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="addBusiness">Create</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="remove" modal>
+      <!-- <h2>{{removingBusiness.name}}</h2> -->
+      <p>Are you sure you want to remove this business?</p>      
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="removeBusiness" class="action-remove">Remove</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="verify">
+      <h2>New Business</h2>
+      <paper-dialog-scrollable>
+        <!-- business form goes here -->
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="showAddBusinessDialog">Create</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="update">
+      <h2>New Business</h2>
+      <paper-dialog-scrollable>
+        <!-- business form goes here -->
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="showAddBusinessDialog">Create</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-toast text="{{smsg}}" id="stoast"></paper-toast>
+    <paper-toast text="{{emsg}}" id="etoast"></paper-toast>
+  </template>
+</dom-module>
+
+<!-- Registers custom element -->
+<script>
+  Polymer({
+    is: 'owner-business',
+    properties: {  
+      business: {
+        type:Object, 
+        value:{
+          name: "",
+          address: "",
+          phoneNumber: ""
+        }
+      },
+      removingBusiness: {
+        type: Object,
+        value: {
+          name: "",
+          id:""
+        },
+        notify: true
+      },
+      smsg: {
+        type: String,
+        notify: true
+      },
+      emsg: {
+        type: String,
+        notify: true
+      }
+    },    
+    addBusiness: function() {      
+      var that = this;
+      var dialog = document.getElementById("add");
+     $.ajax({
+        url:"/owner/api/business",
+        data: JSON.stringify(that.business),
+        contentType: "application/json",
+        method: "POST"
+      }).done(function(msg){
+        if(msg.success) {
+          dialog.close();
+          that.smsg = "Business was created successfully!";
+          that.$.stoast.open();                    
+        } else {
+          that.emsg = "Business creation failed!";
+          that.$.etoast.open();
+        }
+      }).fail(function(err){
+        console.log(err);
+      });
+    },
+    updateBusiness: function() {
+
+    },
+    removeBusiness: function(e) {
+      var id = this.removingBusiness.id;
+      var dialog = document.getElementById("remove");
+      var that = this;
+      $.ajax({
+        url:"/owner/api/business/" + id,
+        method: "DELETE"
+      }).done(function(msg){
+        if(msg.success) { 
+          that.smsg = "Business was removed successfully!";
+          that.$.stoast.open();                    
+        } else {
+          that.emsg = "Business removal failed!";
+          that.$.etoast.open();
+        }
+        dialog.close();
+      }).fail(function(err){
+        console.log(err);
+      });
+
+    },
+    verifyBusiness: function() {
+
+    },
+    showDialog:function(e) {
+      var button = e.target;
+      while (!button.hasAttribute('data-dialog') && button !== document.body) {
+        button = button.parentElement;
+      }
+
+      if (!button.hasAttribute('data-dialog')) {
+        return;
+      }
+
+      var id = button.getAttribute('data-dialog');
+      var dialog = document.getElementById(id);
+      if (dialog) {
+        dialog.open();
+      }
+
+      this.removingBusiness.name = e.model.item.name;
+      this.removingBusiness.id = e.model.item._id;      
+    }
+  });
+</script>

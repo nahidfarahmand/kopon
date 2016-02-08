@@ -1,7 +1,8 @@
 var express = require('express'),
     passport = require('passport'),
     couponController = require('../controllers/coupon'),
-    ownerController = require('../controllers/owner');
+    ownerController = require('../controllers/owner'),
+    businessController = require('../controllers/business');
 
 var indexRouter = express.Router();
 
@@ -48,11 +49,15 @@ indexRouter.route('/logout').get(function(req, res) {
   req.logout();
   res.redirect('/');
 });
-  
-indexRouter.route('/post/coupon').post(couponController.add);
-indexRouter.route('/get/coupons').get(couponController.getAll);
 
-indexRouter.route('/post/owner').post(ownerController.signup);
-indexRouter.route('/get/owners').get(ownerController.getAll);
+
+indexRouter.route('/owner/api/coupon').post(couponController.add);
+//indexRouter.route('/owner/api/coupon/:id').get(couponController.getCoupon);
+indexRouter.route('/owner/api/coupons').get(couponController.getAll);
+
+indexRouter.route('/owner/api/business').post(businessController.add);
+indexRouter.route('/owner/api/business/:id').delete(businessController.deleteBusiness);
+indexRouter.route('/owner/api/business/:id').get(ownerController.getBusiness);
+indexRouter.route('/owner/api/businesses').get(ownerController.getAllBusiness);
 
 exports.indexRouter = indexRouter;

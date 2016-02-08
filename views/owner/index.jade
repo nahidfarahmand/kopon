@@ -18,6 +18,7 @@ html(lang='en')
     link(rel='apple-touch-icon', href='/img/touch/apple-touch-icon.png')
     meta(name='msapplication-TileImage', content='/img/touch/ms-touch-icon-144x144-precomposed.png')
     link(rel='stylesheet', href='/css/styles.css')
+    script(src='/vendor/jquery/dist/jquery.js')
     script(src='/vendor/webcomponentsjs/webcomponents.js')
     link(rel='import', href='/components/owner/elements.html')
     style(is='custom-style', include='shared-styles')
@@ -57,13 +58,12 @@ html(lang='en')
             iron-pages(attr-for-selected='data-route', selected='{{route}}')
               section(data-route='home')
                 span this is home section
-              section(data-route='profile')
-                span This is profile section
-                owner-profile(user=user)
+              section(data-route='profile')                
+                owner-profile
               section(data-route='coupons')
                 span this is coupon section
               section(data-route='business')
-                span This is business section
+                owner-business
       paper-toast#toast
         span.toast-hide-button(role='button', tabindex='0', onclick='app.$.toast.hide()') Ok
     script(src='/js/owner/app.js')

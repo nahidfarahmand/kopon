@@ -1,64 +1,33 @@
 var OwnerSchema = require('../models/owner');
-var bcrypt = require('bcrypt-nodejs');
+var BusinessSchema = require('../models/business');
 
-exports.getAll = function(req, res) {    
-    OwnerSchema.find().sort({
-        createdAt: 1
-    }).exec(function(err,list){
+exports.getAllBusiness = function(req, res) {  
+    //TODO: update to req.user.username
+    var _user = req.user.username;  
+    OwnerSchema.findOne({username:_user}).populate('businessCollection').exec(function (err, o) {
         if(err){
-            res.send('error');
+            res.send({success: false, error: err.message});
         }
         else {
+            console.log(o);
             res.set('Content-Type', 'application/json');
-            res.send(list);
-        }
-    });
-    
-};
-
-exports.signup = function(req, res) {
-    console.log(req.body);
-    var _username = req.body.username;
-    var _firstname = req.body.firstname;
-    var _lastname = req.body.lastname;
-    var _phonenumber = req.body.phonenumber;
-    var _email = req.body.email;
-    var _password = req.body.password;
-    var saltedPassword = bcrypt.hashSync(_password);
-
-    //TODO: validate doe snot already exist
-
-    var owner = new OwnerSchema({
-    	username : _username,
-    	password : saltedPassword,
-        email: _email,
-        firstName: _firstname,
-        lastName: _lastname,
-        phoneNumber: _phonenumber
-    });
-    owner.save(function (err){
-    	if(err){    		
-    		res.send({'success': 0});
-    	}
-    	else {
-    		res.send({'success': 1});
-    	}
-    });
-};
-
-
-exports.getBusiness = function(req, res) {  
-    var _user = req.query.username;  
-    OwnerSchema.find({username:_user}).select('businessCollection').sort({
-        createdAt: 1
-    }).exec(function(err,list){
-        if(err){
-            res.send('error');
-        }
-        else {
-            res.set('Content-Type', 'application/json');
-            res.send(list);
+            res.send({success: true, businesses: o.businessCollection});
             
+        }
+    });
+};
+
+exports.getBusiness = function(req, res) {      
+    //TODO: update to req.user.username
+    var _user = req.query.username;  
+    var _id = req.query.id;
+    OwnerSchema.findOne({username:_user}).select('businessCollection').findById(_id, function (err, b) {
+      if(err){
+            res.send({success: false, error: err.message});
+        }
+        else {
+            res.set('Content-Type', 'application/json');
+            res.send({success: true, busines: b});
         }
     });
     
