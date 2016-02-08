@@ -18,12 +18,12 @@
         margin-bottom: 24px;        
       }      
 
-      address-autocomplete {
-        width: 280px;
+      paper-card, address-autocomplete {
+        width: 320px;
       }
 
       paper-dialog {
-        margin: 16px;
+        margin: 8px;        
       }
 
       #stoast {        
@@ -51,11 +51,7 @@
         <span class="no-business">You have no business, click + to add one!</span>
       </template> -->
       <template id="repeater" is="dom-repeat" items="[[data.businesses]]" as="item" observe="verificationDocumentUrl item.verificationDocumentUrl">
-        <style is="custom-style">
-          paper-card {
-            width: 320px;
-            margin: 16px;
-          }
+        <style is="custom-style">          
           .business-header { 
             white-space: nowrap;
             overflow: hidden;
@@ -68,6 +64,7 @@
             font-size: 15px;
             vertical-align: middle;
           }
+          .action-primary { color: var(--paper-pink-500); }
           .action-verify, .action-edit { color: var(--paper-blue-500); }
           .action-remove { color: var(--paper-red-500); }
           iron-icon.star {
@@ -87,6 +84,10 @@
           a, a:visited {
             text-decoration: none;
             color: var(--paper-deep-orange-500);
+          }
+
+          paper-dialog > *:not(h2){
+            margin: 0;
           }
 
           iron-icon.star:last-of-type { color: var(--paper-grey-500); }
@@ -130,7 +131,7 @@
             <template is="dom-if" if="{{!item.verificationDocumentUrl}}">
               <paper-button on-click="showDialog" data-dialog="verify" class="action-verify">Verify</paper-button>
             </template>
-            <paper-button on-click="showDialog" data-dialog="update" class="action-edit">Update</paper-button>
+            <paper-button on-click="showDialog" data-dialog="update" class="action-edit">Edit</paper-button>
             <paper-button on-click="showDialog" data-dialog="remove" class="action-remove">Remove</paper-button>
           </div>
         </paper-card>        
@@ -138,24 +139,22 @@
     </div>
 
     <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="add" modal>
-      <h2>New Business</h2>
-      <paper-dialog-scrollable>
+      <h2>New business</h2>      
         <paper-input value="{{business.name}}" label="Name" type="text" auto-validate required char-counter minlength="6" maxlength="20"></paper-input>
         <gold-phone-input auto-validate required label="Phone Number" value="{{business.phoneNumber}}"></gold-phone-input>
-        <address-autocomplete value="{{business.address}}"></address-autocomplete>        
-      </paper-dialog-scrollable>
+        <address-autocomplete value="{{business.address}}"></address-autocomplete>              
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-click="addBusiness">Create</paper-button>
+        <paper-button on-click="addBusiness" class="action-primary">Create</paper-button>
       </div>
     </paper-dialog>
 
     <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="remove" modal>
-      <!-- <h2>{{currentItem.name}}</h2> -->
-      <p>Are you sure you want to remove this business?</p>      
+      <h2>Removing business: {{currentItem.name}}</h2>
+      <p style="padding-top:24px; font-size: 16px;">Are you sure you want to remove this business?</p>      
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-click="removeBusiness" class="action-remove">Remove</paper-button>
+        <paper-button on-click="removeBusiness" class="action-primary">Remove</paper-button>
       </div>
     </paper-dialog>
 
@@ -166,18 +165,16 @@
       </paper-dialog-scrollable>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-click="verifyBusiness">Verify</paper-button>
+        <paper-button on-click="verifyBusiness" class="action-primary">Verify</paper-button>
       </div>
     </paper-dialog>
 
-    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="update">
-      <h2>New Business</h2>
-      <paper-dialog-scrollable>
-        <!-- business form goes here -->
-      </paper-dialog-scrollable>
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="update" modal>
+      <h2>Update business</h2>
+      
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-click="showAddBusinessDialog">Create</paper-button>
+        <paper-button on-click="updateBusiness" class="action-primary">Update</paper-button>
       </div>
     </paper-dialog>
 
@@ -333,17 +330,11 @@
 
       this.currentItem.name = model.item.name;
       this.currentItem.id = model.item._id;
-    },
-    _renderRepeat: function () {
-      this.paperCard = Polymer.dom(this.root).querySelectorAll('task-element');
-      this.animationConfig['entry'].push({
-          name: 'cascaded-animation',
-          animation: 'transform-animation',
-          transformFrom: 'translateY(100vh)',
-          nodes: this.paperCard
-      });
 
-      this.playAnimation('entry');
+      this.set("currentItem.name", model.item.name);
+    },
+    updateBusiness: function() {
+
     }
   });
 </script>
