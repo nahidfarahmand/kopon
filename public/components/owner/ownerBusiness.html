@@ -7,8 +7,7 @@
       }         
 
       .horizontal-section-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
+        @apply(--layout-horizontal-start);        
         @apply(--layout-wrap);
       }         
       paper-fab {
@@ -19,7 +18,11 @@
       }      
 
       paper-card, address-autocomplete {
-        width: 320px;
+        width: 320px;        
+      }
+
+      paper-card {
+        margin: 8px;
       }
 
       paper-dialog {
@@ -135,17 +138,16 @@
                 <span>[[item.phoneNumber]]</span>                
               </span>
               <span style="float:right; cursor: pointer" on-click="showCoupons">
+                <template is="dom-if" if="{{item.verificationDocumentUrl}}">
+                  <a href="[[item.verificationDocumentUrl]]" target="_blank">
+                    <iron-icon icon="icons:description"></iron-icon>
+                  </a>
+                  <paper-tooltip position="left">Verification Document</paper-tooltip>
+                </template>
                 <iron-icon icon="icons:card-giftcard"></iron-icon>
-                <span>[[item.coupons.length]]</span>                
+                <span>[[item.coupons.length]]</span>
               </span>            
-            </p>
-            <template is="dom-if" if="{{item.verificationDocumentUrl}}">
-              <p>
-                <a href="[[item.verificationDocumentUrl]]" target="_blank">
-                  <iron-icon icon="icons:description"></iron-icon> Verification Document                
-                </a>              
-              </p>
-            </template>
+            </p>            
           </div>
           <div class="card-actions">            
             <template is="dom-if" if="{{!item.verificationDocumentUrl}}">
