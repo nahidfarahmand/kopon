@@ -38,6 +38,26 @@
         font-size: 24px;      
         color: #bbb;        
       }
+
+      .holder {
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        align-items: center;
+      }
+
+      .coupon-holder {
+        flex: 2;
+      }
+
+      .template-holder {
+        flex: 2;
+      }
+
+      .coupon-fab-holder {
+        flex: 1;
+        min-width: 32px;
+      }
     </style>    
     <iron-ajax
       auto
@@ -88,7 +108,7 @@
 
           paper-dialog > *:not(h2){
             margin: 0;
-          }
+          }          
 
           iron-icon.star:last-of-type { color: var(--paper-grey-500); }
         </style>
@@ -114,7 +134,7 @@
                 <iron-icon icon="communication:contact-phone"></iron-icon>
                 <span>[[item.phoneNumber]]</span>                
               </span>
-              <span style="float:right">
+              <span style="float:right; cursor: pointer" on-click="showCoupons">
                 <iron-icon icon="icons:card-giftcard"></iron-icon>
                 <span>[[item.coupons.length]]</span>                
               </span>            
@@ -132,7 +152,7 @@
               <paper-button on-click="showDialog" data-dialog="verify" class="action-verify">Verify</paper-button>
             </template>
             <paper-button on-click="showDialog" data-dialog="update" class="action-edit">Edit</paper-button>
-            <paper-button on-click="showDialog" data-dialog="remove" class="action-remove">Remove</paper-button>
+            <paper-button on-click="showDialog" data-dialog="remove" class="action-remove">Remove</paper-button>            
           </div>
         </paper-card>        
       </template>
@@ -170,14 +190,12 @@
     </paper-dialog>
 
     <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="update" modal>
-      <h2>Update business</h2>
-      
+      <h2>Update business</h2>      
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
         <paper-button on-click="updateBusiness" class="action-primary">Update</paper-button>
       </div>
     </paper-dialog>
-
     <paper-toast text="{{smsg}}" id="stoast"></paper-toast>
     <paper-toast text="{{emsg}}" id="etoast"></paper-toast>
   </template>
@@ -329,12 +347,17 @@
       }
 
       this.currentItem.name = model.item.name;
-      this.currentItem.id = model.item._id;
+      this.currentItem.id = model.item._id;      
 
       this.set("currentItem.name", model.item.name);
+      this.set("currentItem.id", model.item._id);
     },
     updateBusiness: function() {
 
+    },
+    showCoupons: function(e){
+      var model = e.model;
+      page("/coupons/" + model.item._id);
     }
   });
 </script>

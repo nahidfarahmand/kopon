@@ -26,16 +26,22 @@
         --paper-toast-background-color: var(--paper-red-500);
       }
     </style>
+     <iron-ajax
+      auto
+      url="/owner/api/user"      
+      handle-as="json"
+      last-response="{{data}}">
+    </iron-ajax>    
     <paper-toast text="profile edited successfully!" id="stoast"></paper-toast>
     <paper-toast text="update failed!" id="etoast"></paper-toast>
-    <paper-material elevation="2">      
-      <paper-input value="{{firstname}}" label="First Name" type="text" auto-validate required ></paper-input>
-      <paper-input value="{{lastname}}" label="Last Name" type="text" auto-validate required ></paper-input>
-      <paper-input value="{{email}}" label="Email" type="email" auto-validate required ></paper-input>
-      <gold-phone-input auto-validate required label="Phone Number" value="{{phonenumber}}"></gold-phone-input>
-      <br>      
-      <paper-button on-click="save">Save</paper-button>
-    </paper-material>
+      <paper-material elevation="2">      
+        <paper-input value="{{data.userInfo.firstName}}" label="First Name" type="text" auto-validate required ></paper-input>
+        <paper-input value="{{data.userInfo.lastName}}" label="Last Name" type="text" auto-validate required ></paper-input>
+        <paper-input value="{{data.userInfo.email}}" label="Email" type="email" auto-validate required ></paper-input>
+        <gold-phone-input auto-validate required label="Phone Number" value="{{data.userInfo.phoneNumber}}"></gold-phone-input>
+        <br>      
+        <paper-button on-click="save">Save</paper-button>
+      </paper-material>
   </template>
 </dom-module>
 

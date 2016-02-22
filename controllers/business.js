@@ -101,4 +101,19 @@ exports.add = function(req, res) {
             });
         }
     });   
-}
+};
+
+exports.getCoupons = function(req, res) {  
+    //TODO: update to req.user.username
+    var _businessId = req.params.id;  
+    BusinessSchema.findById(_businessId).populate('coupons').exec(function (err, b) {
+        if(err){
+            res.send({success: false, error: err.message});
+        }
+        else {            
+            res.set('Content-Type', 'application/json');
+            res.send({success: true, coupons: b.coupons});
+            
+        }
+    });
+};

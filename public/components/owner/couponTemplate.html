@@ -1,0 +1,37 @@
+<dom-module id="coupon-template">
+  <template>
+    <style>    
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center);        
+      }     
+    </style>
+    <iron-ajax
+      auto
+      url="/owner/api/templates"
+      handle-as="json"
+      last-response="{{data}}">
+    </iron-ajax>    
+    <div class="horizontal-section-container">
+      <template id="repeater" is="dom-repeat" items="[[data.templates]]" as="item" >
+        <style is="custom-style">          
+          
+        </style>
+        <paper-material>
+        	<div inner-h-t-m-l="[[item.template]]"></div>
+    	</paper-material>       
+      </template>
+    </div>
+  </template> 
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'coupon-template',
+    properties: {
+      
+  	}    
+  });
+
+</script>
+

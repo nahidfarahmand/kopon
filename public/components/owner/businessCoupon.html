@@ -1,0 +1,242 @@
+<dom-module id="business-coupon">
+  <template>
+    <style>    
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center);    
+      }
+     .horizontal-section-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+      } 
+      #stoast {        
+        --paper-toast-background-color: var(--paper-green-500);
+      }
+
+      #etoast {
+        --paper-toast-background-color: var(--paper-red-500);
+      }            
+
+      paper-fab {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+      }
+
+      paper-input {
+        width: 280px;
+      }
+    </style>
+    <iron-ajax
+      auto
+      url="/owner/api/coupons/[[businessId]]"      
+      handle-as="json"
+      last-response="{{data}}">    
+    </iron-ajax>
+    <paper-toast text="{{smsg}}" id="stoast"></paper-toast>
+    <paper-toast text="{{emsg}}" id="etoast"></paper-toast>
+    <paper-fab icon="add" on-click="showDialog" data-dialog="new"></paper-fab>
+    <paper-dropdown-menu label="Filter coupons" >
+      <paper-listbox class="dropdown-content" selected="{{which}}" attr-for-selected="value">
+        <paper-item value="all">all</paper-item>
+        <paper-item value="past">past</paper-item>
+        <paper-item value="current">current</paper-item>
+        <paper-item value="future">future</paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <div class="horizontal-section-container">
+      <template id="repeater" is="dom-repeat" items="[[data.coupons]]" as="item"  filter="{{couponFilter(which)}}">
+        <style is="custom-style">          
+          .coupon-header { 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            @apply(--paper-font-headline);            
+          }
+
+          paper-material {
+            margin: 8px;
+            padding: 16px;
+          }
+
+          .holder {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            align-items: center;
+          }
+          
+          .template-holder {
+            max-width: 200px;
+            min-width: 200px;
+            padding-left: 16px;
+            padding-right: 16px;            
+          }
+        </style>
+        <paper-material elevation="1">
+          <div class="card-content" class="horizontal-section">            
+            <div class="coupon-header" id="item-[[item._id]]">
+              [[item.title]]
+              <paper-tooltip position="top">[[item.title]]</paper-tooltip>
+            </div>                        
+            <p >
+              [[dateFilter(item.startDate)]]
+            </p>
+            <p >
+              For [[item.duration]] hours
+            </p>            
+            <p>              
+              [[item.body]]
+            </p>
+          </div>
+        </paper-material>        
+      </template>
+    </div>
+
+    <paper-dialog entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="new" modal>
+      <h2>New Coupon</h2>  
+       <paper-dialog-scrollable>
+          <div class="holder">
+            <div class="template-holder">
+              <coupon-template></coupon-template>
+            </div>          
+            <div class="coupon-holder">
+              <paper-input value="{{coupon.title}}" label="Title" type="text" auto-validate required char-counter minlength="6" maxlength="20"></paper-input>
+              <paper-input value="{{coupon.footer}}" label="Footer" type="text"></paper-input>
+              <paper-input value="{{coupon.body}}" label="Body" type="text"></paper-input>
+              <paper-input value="{{coupon.code}}" label="Code" type="text"></paper-input>
+              <paper-input value="{{coupon.startDate}}" label="Start Date" type="date" ></paper-input>
+              <paper-input value="{{time}}" label="Start Time" type="time" ></paper-input>      
+              <paper-input value="{{coupon.duration}}" label="Duration" type="number" ></paper-input>
+            </div>    
+          </div>    
+        </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="addCoupon" class="action-primary">Create</paper-button>
+      </div>
+
+    </paper-dialog>
+
+  </template> 
+</dom-module>
+
+<!-- Registers custom element -->
+<script>
+  Polymer({
+    is: 'business-coupon',
+    properties: {
+      businessId: {
+        type: String,
+        notify: true,
+        reflectToAttribute: true 
+     },
+     coupon: {
+        type:Object, 
+        value:{
+          title: "",
+          footer: "",
+          body: "",
+          startDate: new Date(),
+          duration: 0,
+          barcodeUrl: "",
+          code: "",
+          businessId : "",
+          couponTemplate : "56b9a01ab1bc80cb773a95bc"
+           
+        }
+    },
+    time: {
+      type: String,
+      observer: "_updateDate"
+    },
+    which: {
+      type: String,      
+      notify: true
+    }
+  },
+    _updateDate: function() {
+      this.coupon.startDate = new Date(this.coupon.startDate + " " + this.time);
+    },
+    addCoupon: function() {      
+      var that = this;
+      that.coupon.businessId = this.businessId;
+      var dialog = document.getElementById("new");
+     $.ajax({
+        url:"/owner/api/coupon",
+        data: JSON.stringify(that.coupon),
+        contentType: "application/json",
+        method: "POST"
+      }).done(function(msg){
+        if(msg.success) {
+          dialog.close();
+          that.smsg = "Coupon was created successfully!";
+          that.$.stoast.open();                    
+          that._addCouponDom(msg.coupon);
+        } else {
+          that.emsg = "Coupon creation failed!";
+          that.$.etoast.open();
+        }
+      }).fail(function(err){
+        console.log(err);
+      });
+    },
+    _addCouponDom: function(coupon) {
+      this.push('data.coupons', coupon);
+    },
+    showDialog:function(e) {
+      var button = e.target;
+      while (!button.hasAttribute('data-dialog') && button !== document.body) {
+        button = button.parentElement;
+      }
+
+      if (!button.hasAttribute('data-dialog')) {
+        return;
+      }
+
+      var id = button.getAttribute('data-dialog');
+      var dialog = document.getElementById(id);
+      if (dialog) {
+        dialog.open();
+        if(id == 'new') return;
+      }
+
+    
+
+      this.currentItem.name = e.model.item.name;
+      this.currentItem.id = e.model.item._id;      
+
+      this.set("currentItem.name", e.model.item.name);
+      this.set("currentItem.id", e.model.item._id);
+    },
+    dateFilter: function(value) {
+      return moment(value).format("MMM Do, YYYY hh:mm A");
+    },
+    couponFilter: function(which) {
+      if(!which || which == "all") {
+        return null;
+      }
+      else {
+        var now = new Date();
+        var when = which.toLowerCase();
+        return function(item) {          
+          var startDate = new Date(item.startDate);
+          var endDate = new Date(item.endDate);
+          switch(when){
+            case "past":
+              return (endDate.getTime() < now.getTime())
+            break;
+            case "current":
+              return (endDate.getTime() > now.getTime() && startDate.getTime() < now.getTime())
+            break;
+            case "future":
+              return (startDate.getTime() > now.getTime())
+            break;
+          }
+        }
+      }
+    }
+  });
+
+</script>

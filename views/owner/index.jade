@@ -19,6 +19,7 @@ html(lang='en')
     meta(name='msapplication-TileImage', content='/img/touch/ms-touch-icon-144x144-precomposed.png')
     link(rel='stylesheet', href='/css/styles.css')
     script(src='/vendor/jquery/dist/jquery.js')
+    script(src='/vendor/moment/moment.js')
     script(src='/vendor/webcomponentsjs/webcomponents.js')
     link(rel='import', href='/components/owner/elements.html')
     style(is='custom-style', include='shared-styles')
@@ -36,9 +37,6 @@ html(lang='en')
             a(data-route='business', href='/owner/business')
               iron-icon(icon='info')
               span Business
-            a(data-route='coupons', href='/owner/coupons')
-              iron-icon(icon='info')
-              span Coupons
             a(data-route='profile', href='/owner/profile')
               iron-icon(icon='info')
               span Profile
@@ -60,10 +58,10 @@ html(lang='en')
                 span this is home section
               section(data-route='profile')                
                 owner-profile
-              section(data-route='coupons')
-                span this is coupon section
               section(data-route='business')
                 owner-business
+              section(data-route='coupons')
+                business-coupon(business-id='{{businessId}}')
       paper-toast#toast
         span.toast-hide-button(role='button', tabindex='0', onclick='app.$.toast.hide()') Ok
     script(src='/js/owner/app.js')

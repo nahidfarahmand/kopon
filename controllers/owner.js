@@ -5,9 +5,7 @@ var OwnerSchema = require('../models/owner');
         destination: function (req, file, cb) {
             cb(null, 'verification_documents/')
         },
-        filename: function (req, file, cb) {
-            console.log(req.body);
-            console.log("-----------------------------------");            
+        filename: function (req, file, cb) {          
             cb(null, 'verification_document_' + req.body.id + ".pdf");
         }
     }),
@@ -39,6 +37,22 @@ exports.getBusiness = function(req, res) {
         else {
             res.set('Content-Type', 'application/json');
             res.send({success: true, busines: b});
+        }
+    });  
+};
+
+exports.getUser = function(req, res) {      
+    //TODO: update to req.user.username
+    var _user = req.user.username; 
+    OwnerSchema.findOne({username:_user}, function (err, u) {
+      if(err){
+            res.send({success: false, error: err.message});
+        }
+        else {
+            res.set('Content-Type', 'application/json');
+            var _userInfo = u;
+            _userInfo.password = "";
+            res.send({success: true, userInfo : _userInfo});
         }
     });  
 };

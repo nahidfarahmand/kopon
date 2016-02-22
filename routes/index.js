@@ -43,9 +43,13 @@ indexRouter.route('/owner').get(isLoggedIn, function(req, res){
 });
 
 indexRouter.route('/verification_documents/*').get(function(req, res){    
-  console.log(req.url);
   appHelpers.sendFile('.' + req.url, res);
 });
+
+indexRouter.route('/coupons/*').get(function(req, res){    
+  appHelpers.sendFile('.' + req.url, res);
+});
+
 
 indexRouter.route('/login').post(passport.authenticate('local-login', {failureRedirect: '/login'}), function(req, res){
   if(req.user) {
@@ -70,8 +74,12 @@ indexRouter.route('/logout').get(function(req, res) {
 
 
 indexRouter.route('/owner/api/coupon').post(couponController.add);
-//indexRouter.route('/owner/api/coupon/:id').get(couponController.getCoupon);
-indexRouter.route('/owner/api/coupons').get(couponController.getAll);
+//indexRouter.route('/owner/api/coupon/:id').get(businessController.getCoupon);
+indexRouter.route('/owner/api/coupons/:id').get(businessController.getCoupons);
+indexRouter.route('/owner/api/templates').get(couponController.getTemplates);
+indexRouter.route('/owner/api/addtemplate').get(couponController.addTemplate);
+
+indexRouter.route('/owner/api/user').get(ownerController.getUser);
 
 indexRouter.route('/owner/api/business').post(businessController.add);
 indexRouter.route('/owner/api/business/:id').delete(businessController.deleteBusiness);
