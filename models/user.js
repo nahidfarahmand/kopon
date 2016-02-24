@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+	bcrypt   = require('bcrypt-nodejs');
 
 var Schema = mongoose.Schema,
     userSchema;
@@ -10,7 +11,19 @@ userSchema = new Schema({
   firstName: {type:String, required: true},
   lastName: {type:String, required: true},
   phoneNumber: {type: String, required: true},
-  createdAt: {type: Date, default: Date.now},
+  lastLogin: {type:Date, default: Date.now},
+  role: {type: String, default: 'User'},
+  usedCoupons: [{type: mongoose.Schema.Types.ObjectId, ref: 'Coupon'}],
+  createdAt: {type: Date, default: Date.now}
 });
+
+userSchema.methods.generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+// checking if password is valid
+userSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
+};
 
 module.exports = mongoose.model('User', userSchema);

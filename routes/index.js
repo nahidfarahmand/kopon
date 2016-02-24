@@ -3,7 +3,8 @@ var express = require('express'),
     fs = require('fs'),
     couponController = require('../controllers/coupon'),
     ownerController = require('../controllers/owner'),
-    businessController = require('../controllers/business');
+    businessController = require('../controllers/business'),
+    gcmConfigController = require ('../controllers/GCMConfig');
 
 var indexRouter = express.Router();
 
@@ -67,11 +68,28 @@ indexRouter.route('/signup').post(passport.authenticate('local-signup', {failure
   }
 });
 
+indexRouter.route('/user/login').post(passport.authenticate('user-login', {failureRedirect: '/user/login'}), function(req, res){    
+  if(req.user) {
+    res.status(200).send({'success':true, 'user': req.user});
+  } else {
+    res.status(401).send({'success': false});
+  }
+});
+
+indexRouter.route('/user/signup').post(passport.authenticate('user-signup', {failureRedirect: '/user/signup'}), function(req, res){
+  if(req.user) {    
+    res.status(200).send({'success':true, 'user': req.user});
+  } else {
+    res.status(401).send({'success': false});
+  }
+});
+
 indexRouter.route('/logout').get(function(req, res) {
   req.logout();
   res.redirect('/');
 });
-
+//indexRouter.route('/api/user/*').all(require('../middlewares/validateRequest'));
+indexRouter.route('/user/api/register/phone').post(gcmConfigController.add);
 
 indexRouter.route('/owner/api/coupon').post(couponController.add);
 //indexRouter.route('/owner/api/coupon/:id').get(businessController.getCoupon);
@@ -80,6 +98,7 @@ indexRouter.route('/owner/api/templates').get(couponController.getTemplates);
 indexRouter.route('/owner/api/addtemplate').get(couponController.addTemplate);
 
 indexRouter.route('/owner/api/user').get(ownerController.getUser);
+indexRouter.route('/coupon/api/push').post(couponController.pushNotification);
 
 indexRouter.route('/owner/api/business').post(businessController.add);
 indexRouter.route('/owner/api/business/:id').delete(businessController.deleteBusiness);

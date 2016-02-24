@@ -24,7 +24,9 @@
     "express-session":"~1.13.0",
     "multer": "^1.1.0",
     "qrcode": "^0.4.2",
-    "hat": "*"
+    "hat": "*",
+    "jwt-simple": "^0.2.0",
+    "node-gcm":"^0.14.0"
   },
   "devDependencies": {
     "grunt": "^0.4.4",

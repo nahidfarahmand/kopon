@@ -13,6 +13,7 @@ ownerSchema = new Schema({
   phoneNumber: {type: String, required: true},
   createdAt: {type: Date, default: Date.now},
   lastLogin: {type:Date, default: Date.now},
+  role: {type: String, default: 'Owner'},
   businessCollection: [{type: mongoose.Schema.Types.ObjectId, ref: 'Business'}]
 });
 

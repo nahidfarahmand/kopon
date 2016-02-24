@@ -37,7 +37,7 @@ app.set('view engine', 'jade');
 
 app
   .use(compress())
-  .use(favicon())  
+  .use(favicon())    
   .use(logger('dev'))
   .use(bodyParser())
   .use(cookieParser('s7az2mm'))
@@ -48,13 +48,14 @@ app
   .use(passport.initialize())
   .use(passport.session())
   .use(flash())
+  .all('/user/api/*', [require('./middlewares/validateRequest')])
   .use(routes.indexRouter);
 
 if (app.get('env') === 'development') {
   app.use(errorHandler());
 }
 
-
 app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
 });
+

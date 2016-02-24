@@ -1,8 +1,10 @@
 var CouponSchema = require('../models/coupon'),
     BusinessSchema = require('../models/business'),
     TemplateSchema = require('../models/couponTemplate'),
+    gcmConfigSchema = require('../models/GCMConfig'),
     Qrcode = require('qrcode'),
     Mongoose = require('mongoose'),
+    Push = require('../push/gcm'),
     hat = require("hat");
 
 exports.getTemplates = function(req, res) {    
@@ -31,6 +33,27 @@ exports.addTemplate = function(req,res){
                 }
             });
 
+};
+
+exports.pushNotification = function(req,res){
+    var coupon = CouponSchema.findById(req.body.id);
+    //it needs this to remove _id from result
+    gcmConfigSchema.find({},'-_id apid',function (err,configs) {
+        if(err){
+            res.send({success: false, error: err.message});
+        }
+        else 
+        {  
+            var tokens = [];
+
+            for (var userKey in configs) 
+                tokens.push(configs[userKey]['apid']);
+
+            Push.sendNotification(coupon,tokens);
+            res.send({success: true});
+
+        }
+    });
 };
 
 exports.add = function(req, res) {    

@@ -27,6 +27,18 @@
       paper-input {
         width: 280px;
       }
+
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        font-size:12px;
+        font-weight:bold;
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+      }
+      
     </style>
     <iron-ajax
       auto
@@ -89,8 +101,11 @@
             <p>              
               [[item.body]]
             </p>
+            <paper-button class="indigo" on-click="sendNotification"><iron-icon icon="check"></iron-icon>Notify</paper-button> 
           </div>
-        </paper-material>        
+
+        </paper-material>  
+             
       </template>
     </div>
 
@@ -236,6 +251,32 @@
           }
         }
       }
+    },
+    sendNotification: function(e){
+      var model = e.model;
+      var that = this;
+      var formData = new FormData();
+      formData.append("id", model.item._id);     
+
+      $.ajax({
+        url:"/coupon/api/push",
+        method: "POST",
+        processData: false,
+        contentType: false,
+        dataType : 'json',
+        data: formData
+      }).done(function(msg){
+        if(msg.success) { 
+          that.smsg = "Notification sent!";
+          that.$.stoast.open();
+        } else {
+          that.emsg = "Sending notifications failed!";
+          that.$.etoast.open();
+        }
+      }).fail(function(err){
+        console.log(err);
+      });
+
     }
   });
 
