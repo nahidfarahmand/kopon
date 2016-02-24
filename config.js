@@ -5,6 +5,9 @@ var config = {
     },
     database: {
       url: 'mongodb://localhost/kopon_dev'
+    },
+    gcm: {
+      key: 'AIzaSyCQsXqLk3dMBkAnSk-AbpZwgTfGdDgdJg4'
     }
   },
   testing: {
